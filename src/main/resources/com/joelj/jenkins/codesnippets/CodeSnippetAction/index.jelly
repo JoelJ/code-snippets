@@ -1,0 +1,60 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout"
+		 xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+	<link rel="stylesheet" href="${rootURL}/plugin/code-snippets/prettify/prettify.css"></link>
+	<link rel="stylesheet" href="${rootURL}/plugin/code-snippets/snippet-style.css"></link>
+	<l:layout norefresh="true" title="Code Snippets">
+		<st:include it="${app}" page="sidepanel.jelly"/>
+		<l:main-panel>
+			<j:if test="${it.userCanRead()}">
+				<div id="code-snippets">
+					<j:set var="currentSnippet" value="${it.snippetFromRequest(request)}" />
+					<j:set var="currentSnippetContent" value="${currentSnippet.readContents()}" />
+					<div id="file-content" class="${currentSnippetContent == null or currentSnippetContent.isEmpty() ? 'hidden' : ''}">
+						<div>
+							Posted by
+							<span class="userName">${currentSnippet.findCurrentUser().fullName ? currentSnippet.findCurrentUser().fullName : "?"}</span>
+							on
+							<span class="date">${currentSnippet.createFormattedDate()}</span>.
+							(<a href="get?filename=${currentSnippet.file.name}">raw</a>)
+						</div>
+						<pre class="prettyprint linenums">${currentSnippetContent}</pre>
+					</div>
+
+					<j:if test="${it.userCanAdd()}">
+						<form id="new-snippet" action="add" method="post">
+							<textarea name="content">${currentSnippetContent}</textarea>
+							<br/>
+							<input type="submit" value="Save" />
+						</form>
+					</j:if>
+
+					<j:set var="snippetList" value="${it.listSnippets()}" />
+					<j:if test="${snippetList != null and !snippetList.isEmpty()}">
+						<h3>Files</h3>
+						<ul class="files">
+							<j:forEach var="snippet" items="${snippetList}">
+								<li class="snippet" name="${snippet.file.name}">
+									<a href="?file=${snippet.file.name}" class="date">${snippet.createFormattedDate()}</a>
+									by
+									<span class="userName" name="${snippet.findUser().id}">${snippet.findUser().fullName}</span>.
+									(<a href="get?filename=${snippet.file.name}">raw</a>)
+								</li>
+							</j:forEach>
+						</ul>
+
+						<j:if test="${it.userCanDelete()}">
+							<input id="deleteButton" type="button" value="Clear" />
+							<form class="hidden" id="delete-all" action="deleteAll" method="post">
+								<span>Clicking confirm will delete all the snippets and cannot be undone.</span>
+								<input type="submit" value="Confirm!" />
+							</form>
+						</j:if>
+					</j:if>
+				</div>
+			</j:if>
+		</l:main-panel>
+	</l:layout>
+	<script src="${rootURL}/plugin/code-snippets/prettify/prettify.js"></script>
+	<script src="${rootURL}/plugin/code-snippets/snippet.js"></script>
+</j:jelly>

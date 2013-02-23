@@ -1,0 +1,49 @@
+#code-snippets #new-snippet textarea {
+	margin-top: 5px;
+	height: 500px;
+	width: 80%;
+}
+#code-snippets #file-content {
+	margin-top: 10px;
+	margin-bottom: 10px;
+}
+
+#code-snippets #file-content pre {
+	padding: 10px;
+	margin-top: 5px;
+	width: 80%;
+}
+
+#code-snippets .hidden {
+	display:none;
+}
+
+#file-content .userName {
+	font-weight: bold;
+}
+
+#file-content .date {
+	font-style: italic;
+}
+
+#code-snippets .files .date {
+	padding-right: 3px;
+}
+
+#code-snippets .files .userName {
+	font-weight: bold;
+}
+
+#code-snippets #delete-all input {
+	background-color: red;
+	color: white;
+	font-weight: bold;
+}
+
+#code-snippets .prettyprint li {
+	list-style-type: inherit;
+}
+
+li.L1, li.L3, li.L5, li.L7, li.L9 {
+	background: #FAFAFA;
+}
