@@ -7,6 +7,8 @@ A list of snippets will appear on the bottom if any exist.
 
 Access is based on Project access. So if a person has permission to CREATE, READ, or DELETE a Project, they will have the same abilities with Snippets.
 
-Todo:
 -----
+
+Todo
+=====
 * Create a new Permissions set unique for snippets. That way a user can have permissions to upload a snippet but not create a project.
