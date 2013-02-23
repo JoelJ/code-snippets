@@ -31,7 +31,7 @@
 
 					<j:set var="snippetList" value="${it.listSnippets()}" />
 					<j:if test="${snippetList != null and !snippetList.isEmpty()}">
-						<h3>Files</h3>
+						<h3>Snippets</h3>
 						<ul class="files">
 							<j:forEach var="snippet" items="${snippetList}">
 								<li class="snippet" name="${snippet.file.name}">
