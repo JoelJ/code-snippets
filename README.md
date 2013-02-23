@@ -1,6 +1,6 @@
 Used just like code-snippet sites like Pastebin.com or Pastie.org.
 
-Files are added $JENKINS_HOME/codesnippets. If the directory doesn't exist, Jenkins will attempt to create it for you.
+Files are added to ```$JENKINS_HOME/codesnippets```. If the directory doesn't exist, Jenkins will attempt to create it for you.
 
 To access the snippets, click on the "Code Snippets" entry on the left bar.
 A list of snippets will appear on the bottom if any exist.
