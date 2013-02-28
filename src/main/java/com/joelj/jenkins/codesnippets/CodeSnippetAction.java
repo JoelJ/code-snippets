@@ -5,8 +5,6 @@ import hudson.model.AbstractProject;
 import hudson.model.RootAction;
 import hudson.model.User;
 import hudson.security.ACL;
-import hudson.security.AccessControlled;
-import hudson.security.AuthorizationStrategy;
 import hudson.security.Permission;
 import jenkins.model.Jenkins;
 import org.apache.commons.io.FileUtils;
@@ -20,6 +18,7 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.logging.Logger;
 
 /**
  * User: Joel Johnson
@@ -28,6 +27,7 @@ import java.util.List;
  */
 @Extension
 public class CodeSnippetAction implements RootAction {
+	private static final Logger LOG = Logger.getLogger("code-snippets");
 	private static final File DIRECTORY = new File(Jenkins.getInstance().getRootDir(), "codesnippets");
 	public static final String UTF_8 = "UTF-8";
 
@@ -58,6 +58,24 @@ public class CodeSnippetAction implements RootAction {
 	public void doDeleteAll(StaplerRequest request, StaplerResponse response) throws IOException {
 		if(userCanDelete()) {
 			FileUtils.cleanDirectory(DIRECTORY);
+		} else {
+			response.setStatus(403);
+		}
+		response.sendRedirect("?");
+	}
+
+	public void doDelete(StaplerRequest request, StaplerResponse response) throws IOException {
+		if(userCanDelete()) {
+			String filename = request.getParameter("filename");
+			File file = new File(DIRECTORY, filename);
+			if(file.exists()) {
+				if(file.delete()) {
+					response.setStatus(500);
+					LOG.warning("Couldn't delete file " + file.getAbsolutePath());
+				}
+			} else {
+				response.setStatus(404);
+			}
 		} else {
 			response.setStatus(403);
 		}

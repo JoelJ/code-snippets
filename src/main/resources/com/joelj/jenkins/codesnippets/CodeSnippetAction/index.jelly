@@ -39,6 +39,9 @@
 									by
 									<span class="userName" name="${snippet.findUser().id}">${snippet.findUser().fullName}</span>.
 									(<a href="get?filename=${snippet.file.name}">raw</a>)
+									<j:if test="${it.userCanDelete()}">
+										<a class="deleteFile" href="delete?filename=${snippet.file.name}">[X]</a>
+									</j:if>
 								</li>
 							</j:forEach>
 						</ul>

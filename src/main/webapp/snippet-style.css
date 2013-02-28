@@ -44,6 +44,17 @@
 	list-style-type: inherit;
 }
 
+#code-snippets a.deleteFile {
+	text-decoration: none;
+	color: red;
+	font-weight: bold;
+}
+
+#code-snippets a.deleteFile:hover {
+	text-decoration: underline;
+	font-style: italic;
+}
+
 li.L1, li.L3, li.L5, li.L7, li.L9 {
 	background: #FAFAFA;
 }
