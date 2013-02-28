@@ -8,8 +8,10 @@
 	margin-bottom: 10px;
 }
 
-#code-snippets #file-content pre {
+#code-snippets #file-content>pre {
+	background-color: white;
 	padding: 10px;
+	padding-left: 0px;
 	margin-top: 5px;
 	width: 80%;
 }
