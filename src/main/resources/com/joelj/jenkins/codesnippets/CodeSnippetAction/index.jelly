@@ -9,7 +9,8 @@
 			<j:if test="${it.userCanRead()}">
 				<div id="code-snippets">
 					<j:set var="currentSnippet" value="${it.snippetFromRequest(request)}" />
-					<j:set var="currentSnippetContent" value="${currentSnippet.readContents()}" />
+                    <j:set var="currentSnippetContent" value="${currentSnippet.readContents()}" />
+                    <j:set var="currentSnippetTitle" value="${currentSnippet.title}" />
 					<div id="file-content" class="${currentSnippetContent == null or currentSnippetContent.isEmpty() ? 'hidden' : ''}">
 						<div>
 							Posted by
@@ -23,6 +24,9 @@
 
 					<j:if test="${it.userCanAdd()}">
 						<form id="new-snippet" action="add" method="post">
+                            <label for="title">Title</label>
+                            <input id="title" type="text" name="title" value="${currentSnippetTitle}"></input><br />
+                            <input type="hidden" value="${currentSnippet.file}" name="oldFilename" />
 							<textarea name="content">${currentSnippetContent}</textarea>
 							<br/>
 							<input type="submit" value="Save" />
@@ -35,7 +39,8 @@
 						<ul class="files">
 							<j:forEach var="snippet" items="${snippetList}">
 								<li class="snippet" name="${snippet.file.name}">
-									<a href="?file=${snippet.file.name}" class="date">${snippet.createFormattedDate()}</a>
+                                    ${snippet.title} on
+									<a href="?file=${snippet.file.name}&amp;title=${snippet.title}" class="date">${snippet.createFormattedDate()}</a>
 									by
 									<span class="userName" name="${snippet.findUser().id}">${snippet.findUser().fullName}</span>.
 									(<a href="get?filename=${snippet.file.name}">raw</a>)

@@ -15,6 +15,7 @@ import java.util.Date;
 public class Snippet implements Comparable<Snippet> {
 	private final File file;
 	private final String userId;
+	private String title;
 	private Date date;
 
 	public Snippet(File file) {
@@ -53,6 +54,14 @@ public class Snippet implements Comparable<Snippet> {
 			return User.getUnknown();
 		}
 		return User.get(getUserId());
+	}
+
+	public void setTitle(String title) {
+		this.title = title;
+	}
+
+	public String getTitle() {
+		return title;
 	}
 
 	public int compareTo(Snippet o) {
