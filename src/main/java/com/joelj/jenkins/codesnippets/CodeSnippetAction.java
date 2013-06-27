@@ -144,6 +144,7 @@ public class CodeSnippetAction implements RootAction {
 				result.add(0, snippet);
 			}
 		}
+		Collections.sort(result);
 		return result;
 	}
 

@@ -12,7 +12,7 @@ import java.util.Date;
  * Date: 2/23/13
  * Time: 12:44 PM
  */
-public class Snippet {
+public class Snippet implements Comparable<Snippet> {
 	private final File file;
 	private final String userId;
 	private Date date;
@@ -22,7 +22,7 @@ public class Snippet {
 		String fileName = file.getName();
 		String[] split = fileName.split("-", 2);
 		String userId = split[0];
-		String dateStr = split[1].split("\\.",2)[0];
+		String dateStr = split[1].split("\\.", 2)[0];
 
 		this.userId = userId;
 		this.date = new Date(Long.parseLong(dateStr));
@@ -49,9 +49,13 @@ public class Snippet {
 	}
 
 	public User findUser() {
-		if(getUserId().equals("anonymous")) {
+		if (getUserId().equals("anonymous")) {
 			return User.getUnknown();
 		}
 		return User.get(getUserId());
+	}
+
+	public int compareTo(Snippet o) {
+		return this.date.compareTo(o.date);
 	}
 }
