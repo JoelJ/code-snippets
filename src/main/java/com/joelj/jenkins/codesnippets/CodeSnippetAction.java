@@ -130,9 +130,9 @@ public class CodeSnippetAction implements RootAction {
 			File file = new File(DIRECTORY, currentUserId + "-" + currentTime + ".txt");
 			File titleFile = new File(DIRECTORY, currentUserId + "-" + currentTime + ".title");
 			int unique = 0;
-			while(file.exists()) {
+			while(file.exists() || titleFile.exists()) {
 				file = new File(DIRECTORY, currentUserId + "-" + currentTime + "." + ++unique + ".txt");
-				titleFile = new File(DIRECTORY, currentUserId + "-" + currentTime + "." + ++unique + ".title");
+				titleFile = new File(DIRECTORY, currentUserId + "-" + currentTime + "." + unique + ".title");
 			}
 
 			FileUtils.writeStringToFile(file, contents, UTF_8);
