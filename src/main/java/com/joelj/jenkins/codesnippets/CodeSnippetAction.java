@@ -34,8 +34,15 @@ public class CodeSnippetAction implements RootAction {
 	public void doAdd(StaplerRequest request, StaplerResponse response) throws IOException {
 		if(userCanAdd()) {
 			String content = request.getParameter("content");
-			File file = addFile(content);
-			response.sendRedirect("?file="+file.getName());
+			String title = request.getParameter("title");
+			String oldFilename = request.getParameter("oldFilename");
+			File file;
+			if(FileUtils.readFileToString(new File(oldFilename), CodeSnippetAction.UTF_8).equals(content)) {
+				file = addFile(content, title, oldFilename);
+			} else {
+				file = addFile(content, title, null);
+			}
+			response.sendRedirect("?file="+file.getName()+"&title="+title);
 		} else {
 			response.setStatus(403);
 		}
@@ -44,8 +51,9 @@ public class CodeSnippetAction implements RootAction {
 	public void doGet(StaplerRequest request, StaplerResponse response) throws IOException {
 		if(userCanRead()) {
 			String filename = request.getParameter("filename");
+			String title = request.getParameter("title");
 			File file = new File(DIRECTORY, filename);
-			Snippet snippet = findSnippet(file);
+			Snippet snippet = findSnippet(file, title);
 			response.setContentType("text/plain");
 			PrintWriter writer = response.getWriter();
 			writer.print(snippet.readContents());
@@ -101,31 +109,51 @@ public class CodeSnippetAction implements RootAction {
 
 	public Snippet snippetFromRequest(StaplerRequest request) throws IOException {
 		String filePath = request.getParameter("file");
+
+		String title = request.getParameter("title");
 		if(filePath == null) {
 			return null;
 		}
 
 		File file = new File(DIRECTORY, filePath);
-		return new Snippet(file);
+		Snippet snippet = new Snippet(file);
+		snippet.setTitle(title);
+		return snippet;
 	}
 
-	public File addFile(String contents) throws IOException {
+	public File addFile(String contents, String title, String filename) throws IOException {
 		verifyRootDirectoryExists();
 		String currentUserId = findCurrentUserId();
 		long currentTime = System.currentTimeMillis();
 
-		File file = new File(DIRECTORY, currentUserId + "-" + currentTime + ".txt");
-		int unique = 0;
-		while(file.exists()) {
-			file = new File(DIRECTORY, currentUserId + "-" + currentTime + "."+unique+".txt");
+		if(filename == null) {
+			File file = new File(DIRECTORY, currentUserId + "-" + currentTime + ".txt");
+			File titleFile = new File(DIRECTORY, currentUserId + "-" + currentTime + ".title");
+			int unique = 0;
+			while(file.exists() || titleFile.exists()) {
+				file = new File(DIRECTORY, currentUserId + "-" + currentTime + "." + ++unique + ".txt");
+				titleFile = new File(DIRECTORY, currentUserId + "-" + currentTime + "." + unique + ".title");
+			}
+
+			FileUtils.writeStringToFile(file, contents, UTF_8);
+			FileUtils.writeStringToFile(titleFile, title, UTF_8);
+			return file;
+		} else {
+			File oldFile = new File(filename);
+			if (!oldFile.exists()) {
+				throw new RuntimeException("This should not happen!");
+			}
+			File titleFile = new File(filename.substring(0, filename.length() - ".txt".length()) + ".title");
+			FileUtils.writeStringToFile(titleFile, title, UTF_8);
+			return oldFile;
 		}
-		FileUtils.writeStringToFile(file, contents, UTF_8);
-		return file;
 	}
 
-	public Snippet findSnippet(File fileName) throws IOException {
+	public Snippet findSnippet(File fileName, String title) throws IOException {
 		verifyRootDirectoryExists();
-		return new Snippet(fileName);
+		Snippet snippet = new Snippet(fileName);
+		snippet.setTitle(title);
+		return snippet;
 	}
 
 	public List<Snippet> listSnippets() throws IOException {
@@ -140,10 +168,22 @@ public class CodeSnippetAction implements RootAction {
 		if(files != null) {
 			result = new ArrayList<Snippet>(files.length);
 			for (File file : files) {
+				if(!file.getName().endsWith(".txt")) continue;
 				Snippet snippet = new Snippet(file);
+				snippet.setTitle("untitled");
+				for (File title : files) {
+					if(!title.getName().endsWith(".title")) continue;
+					if(file.getName().substring(0, file.getName().length() - ".txt".length()).equals(title.getName().substring(0, title.getName().length() - ".title".length()))) {
+						snippet.setTitle(FileUtils.readFileToString(title, CodeSnippetAction.UTF_8));
+					}
+
+				}
+
 				result.add(0, snippet);
+
 			}
 		}
+		Collections.sort(result);
 		return result;
 	}
 
